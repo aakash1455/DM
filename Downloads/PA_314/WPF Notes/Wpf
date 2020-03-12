@@ -1,0 +1,120 @@
+1) Assigning dataTable to DataGrid in WPF
+Generate the columns manually from the list of properties returned by the query
+Set up a DataBinding object
+After that the built-in data binding kicked in and worked fine and didn't seem to have any issue getting the property values out of the ExpandoObject.
+
+<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Results}" />
+
+And
+
+// Since there is no guarantee that all the ExpandoObjects have the 
+// same set of properties, get the complete list of distinct property names
+// - this represents the list of columns
+var rows = dataGrid1.ItemsSource.OfType<IDictionary<string, object>>();
+var columns = rows.SelectMany(d => d.Keys).Distinct(StringComparer.OrdinalIgnoreCase);
+
+foreach (string text in columns)
+{
+    // now set up a column and binding for each property
+    var column = new DataGridTextColumn 
+    {
+        Header = text,
+        Binding = new Binding(text)
+    };
+
+    dataGrid1.Columns.Add(column);
+}
+-----------------------------------------------------------------------------------------------------------------------
+2) Assigning dataTable to DataGrid in WPF
+
+There are at least three ways of doing this:
+
+Modify the DataGrid's columns manually from code-behind
+Use a DataTable as the ItemsSource *
+Use a CustomTypeDescriptor
+
+There are at least three ways of doing this:
+
+->Modify the DataGrid's columns manually from code-behind
+->Use a DataTable as the ItemsSource *
+->Use a CustomTypeDescriptor
+
+*recommended for simplicity
+
+1st approach:-> use code-behind to generate the DataGrid's columns at runtime. This is simple to implement, 
+				but maybe feels a bit hackish, especially if you're using MVVM. So you'd have your DataGrid with fixed columns:
+
+<DataGrid x:Name="grid">
+    <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding id}" Header="id" />
+        <DataGridTextColumn Binding="{Binding image}" Header="image" />
+    </DataGrid.Columns>
+</DataGrid>
+When you have your "Names" ready, then modify the grid by adding/removing columns, eg:
+
+// add new columns to the data grid
+void AddColumns(string[] newColumnNames)
+{
+    foreach (string name in newColumnNames)
+    {
+        grid.Columns.Add(new DataGridTextColumn { 
+            // bind to a dictionary property
+            Binding = new Binding("Custom[" + name + "]"), 
+            Header = name 
+        });
+    }
+}
+
+You'll want to create a wrapper class, which should contain the original class, plus a dictionary to contain the custom properties. 
+Let's say your main row class is "User", then you'd want a wrapper class something like this:
+
+public class CustomUser : User
+{
+    public Dictionary<string, object> Custom { get; set; }
+
+    public CustomUser() : base()
+    {
+        Custom = new Dictionary<string, object>();
+    }
+}
+
+Populate the ItemsSource with a collection of this new "CustomUser" class:
+
+void PopulateRows(User[] users, Dictionary<string, object>[] customProps)
+{
+    var customUsers = users.Select((user, index) => new CustomUser {
+        Custom = customProps[index];
+    });
+    grid.ItemsSource = customUsers;
+}
+
+So tying it together, for example:
+
+var newColumnNames = new string[] { "Name1", "Name2" };
+var users = new User[] { new User { id="First User" } };
+var newProps = new Dictionary<string, object>[] {
+    new Dictionary<string, object> { 
+        "Name1", "First Name of First User",
+        "Name2", "Second Name of First User",
+    },
+};
+AddColumns(newColumnNames);
+PopulateRows(users, newProps);
+----------------------------------------------------------------------------------------------------------------------------------------------
+3) Assign ComboBox With Value in wpf
+
+<DataGridTemplateColumn Header="Data Table Style*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataTableStyle}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn> 
+ 
+-------------------------------------------------------------------------------------------------------------------------------------

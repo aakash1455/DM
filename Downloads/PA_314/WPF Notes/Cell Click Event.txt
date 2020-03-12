@@ -1,0 +1,16 @@
+-----------------XAML---------------
+
+ <DataGridTextColumn  Header="Data Table" Width="112" Binding="{Binding Path=rnge}" x:Uid="4" >
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <EventSetter Event="MouseDoubleClick" Handler="DataTable_CellClick"/>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+-----------------.CS-----------------------
+
+ private void DataTable_CellClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
+---------------------------------------------
