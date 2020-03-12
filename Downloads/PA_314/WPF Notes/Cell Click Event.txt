@@ -11,6 +11,6 @@
 
  private void DataTable_CellClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-
+messageBox.show("HEllo");
         }
 ---------------------------------------------
