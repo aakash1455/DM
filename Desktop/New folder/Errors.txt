@@ -1,0 +1,15 @@
+1) Blank spaces are not shown in (hinzendraFile) header not selected.(in filter case)--->Solved
+
+2)DaTaTable (all) column values are not shown in Prievew in(ims sheet1) -----> Solved
+
+3) DM Double Click evet throw error in DMResult form-----> Solved.
+
+
+
+**VirtualizingStackPanel.VirtualizationMode="Standard"
+-----------------------------------------------------------------------------------------------
+
+DM->
+
+1) took workbook on front While selecting for Range.
+2) Bydefault Time Frequency And Data types are Blanks on Brows Click.
